@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using MinimalApiResponses;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,15 @@ app.MapGet("/", () => Results.Json("Blog"));
 app.MapGet("/api/Posts", () =>
 {
     return Results.Ok(Data.Posts);
+});
+
+app.MapGet("/api/Posts/{id}", ([FromRoute] int id) =>
+{
+    var post = Data.Posts.FirstOrDefault(p => p.Id == id);
+    if (post is null)
+        return Results.NotFound(new { Message = "Post not found!" });
+
+    return Results.Ok(post);
 });
 
 app.Run();
