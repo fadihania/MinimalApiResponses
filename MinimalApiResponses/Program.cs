@@ -25,11 +25,22 @@ app.MapGet("/api/Posts/{id}", ([FromRoute] int id) =>
 app.MapPost("/api/Posts", ([FromBody] Post? newPost) =>
 {
     if (newPost is null)
-        return Results.BadRequest(new { Message = "New post details must be provided" });
+        return Results.BadRequest(new { Message = "New post details must be provided!" });
 
     Data.Posts.Add(newPost);
 
     return Results.Created("Posts", newPost.Id);
+});
+
+app.MapDelete("/api/Posts/{id}", ([FromRoute] int id) =>
+{
+    var post = Data.Posts.FirstOrDefault(p => p.Id == id);
+    if (post is null)
+        return Results.NotFound(new { Message = "Post not found!" });
+
+    Data.Posts.Remove(post);
+
+    return Results.NoContent();
 });
 
 app.Run();
