@@ -43,4 +43,15 @@ app.MapDelete("/api/Posts/{id}", ([FromRoute] int id) =>
     return Results.NoContent();
 });
 
+app.MapPut("/api/Posts/{id}", ([FromRoute] int id, [FromBody] Post updatedPost) =>
+{
+    var postIndex = Data.Posts.FindIndex(p => p.Id == id);
+    if (postIndex < 0)
+        return Results.NotFound(new { Message = "Post not found!" });
+
+    Data.Posts[postIndex] = updatedPost;
+
+    return Results.NoContent();
+});
+
 app.Run();
