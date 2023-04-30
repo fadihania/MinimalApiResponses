@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using MinimalApiResponses;
+using MinimalApiResponses.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 var app = builder.Build();
@@ -19,6 +20,13 @@ app.MapGet("/api/Posts/{id}", ([FromRoute] int id) =>
         return Results.NotFound(new { Message = "Post not found!" });
 
     return Results.Ok(post);
+});
+
+app.MapPost("/api/Posts", ([FromBody] Post newPost) =>
+{
+    Data.Posts.Add(newPost);
+
+    return Results.Created("Posts", newPost.Id);
 });
 
 app.Run();
