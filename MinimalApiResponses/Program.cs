@@ -47,13 +47,17 @@ app.MapDelete("/api/Posts/{id}", async ([FromRoute] int id) =>
     return Results.NoContent();
 });
 
-app.MapPut("/api/Posts/{id}", ([FromRoute] int id, [FromBody] Post updatedPost) =>
+app.MapPut("/api/Posts/{id}", async ([FromRoute] int id, [FromBody] Post updatedPost) =>
 {
-    var postIndex = Data.Posts.FindIndex(p => p.Id == id);
-    if (postIndex < 0)
+    var post = db.Posts.FirstOrDefault(p => p.Id == id);
+    if (post is null)
         return Results.NotFound(new { Message = "Post not found!" });
 
-    Data.Posts[postIndex] = updatedPost;
+    post.Title = updatedPost.Title;
+    post.Content = updatedPost.Content;
+    post.Author = updatedPost.Author;
+
+    await db.SaveChangesAsync();
 
     return Results.NoContent();
 });
