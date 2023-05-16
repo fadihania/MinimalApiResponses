@@ -35,13 +35,14 @@ app.MapPost("/api/Posts", async ([FromBody] Post? newPost) =>
     return Results.Created("Posts", newPost.Id);
 });
 
-app.MapDelete("/api/Posts/{id}", ([FromRoute] int id) =>
+app.MapDelete("/api/Posts/{id}", async ([FromRoute] int id) =>
 {
-    var post = Data.Posts.FirstOrDefault(p => p.Id == id);
+    var post = db.Posts.FirstOrDefault(p => p.Id == id);
     if (post is null)
         return Results.NotFound(new { Message = "Post not found!" });
 
-    Data.Posts.Remove(post);
+    db.Posts.Remove(post);
+    await db.SaveChangesAsync();
 
     return Results.NoContent();
 });
