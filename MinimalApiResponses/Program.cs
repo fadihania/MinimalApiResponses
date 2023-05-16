@@ -8,14 +8,16 @@ var app = builder.Build();
 app.MapGet("/", () => Results.Json("Blog"));
 
 // Blog API
+var db = new DbData();
+
 app.MapGet("/api/Posts", () =>
 {
-    return Results.Ok(Data.Posts);
+    return Results.Ok(db.Posts);
 });
 
 app.MapGet("/api/Posts/{id}", ([FromRoute] int id) =>
 {
-    var post = Data.Posts.FirstOrDefault(p => p.Id == id);
+    var post = db.Posts.FirstOrDefault(p => p.Id == id);
     if (post is null)
         return Results.NotFound(new { Message = "Post not found!" });
 
