@@ -24,12 +24,13 @@ app.MapGet("/api/Posts/{id}", ([FromRoute] int id) =>
     return Results.Ok(post);
 });
 
-app.MapPost("/api/Posts", ([FromBody] Post? newPost) =>
+app.MapPost("/api/Posts", async ([FromBody] Post? newPost) =>
 {
     if (newPost is null)
         return Results.BadRequest(new { Message = "New post details must be provided!" });
 
-    Data.Posts.Add(newPost);
+    db.Posts.Add(newPost);
+    await db.SaveChangesAsync();
 
     return Results.Created("Posts", newPost.Id);
 });
